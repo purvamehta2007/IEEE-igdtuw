@@ -1,6 +1,7 @@
 IEEE IGDTUW App
 
-IEEE IGDTUW is a modern web & Android app for students, members, and tech enthusiasts. It combines a tech feed, AI integrations, gamification, and interactive community features to keep users engaged and informed.
+IEEE IGDTUW is a modern web & Android app for students, members, and tech enthusiasts.
+It combines a tech feed, AI integrations, gamification, and interactive community features to keep users engaged and informed.
 
 🚀 Features
 1. Tech Feed
@@ -53,7 +54,7 @@ Frontend	React + TypeScript
 Styling	Tailwind CSS (Cyberpunk theme with blue-purple accents)
 Build Tool	Vite
 Backend	Node.js / Supabase
-AI/Chatbot	OpenAI API or equivalent AI integration
+AI/Chatbot	OpenAI API or equivalent
 Gamification	Custom leaderboard + points system
 Mobile Deployment	PWA or Capacitor for Android
 📦 Folder Structure (Suggested)
@@ -77,45 +78,45 @@ IEEE-igdtuw/
 
 ⚡ Run Locally (Web)
 
-Clone the repo:
+1. Clone the repo
 
 git clone https://github.com/purvamehta2007/IEEE-igdtuw.git
 cd IEEE-igdtuw
 
 
-Install dependencies:
+2. Install dependencies
 
 npm install
 
 
-Create .env for Supabase/AI keys:
+3. Create .env file for Supabase/AI keys
 
 VITE_SUPABASE_URL=your_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
 VITE_OPENAI_KEY=your_openai_api_key
 
 
-Start development server:
+4. Start development server
 
 npm run dev
 
 
-Open http://localhost:3000
- in your browser.
+5. Open in browser
+http://localhost:3000
 
 📱 Run on Android
 Option 1: Progressive Web App (PWA)
 
-Add PWA plugin for Vite.
+Add PWA plugin for Vite
 
 Build the app:
 
 npm run build
 
 
-Deploy dist/ folder online (Vercel/Netlify).
+Deploy dist/ folder online (Vercel/Netlify)
 
-Open the URL in Chrome → “Add to Home Screen” → Works as an Android app.
+Open the URL in Chrome → Add to Home Screen → Works as an Android app
 
 Option 2: Capacitor
 
@@ -137,18 +138,18 @@ Open in Android Studio:
 npx cap open android
 
 
-Run on emulator or physical device → native Android app.
+Run on emulator or physical device → native Android app
 
 🏆 Usage
 
-Open the app in browser or Android device.
+Open the app in browser or Android device
 
-Tech Feed: Stay updated with news, research, tips, and daily puzzles.
+Tech Feed: Stay updated with news, research, tips, and daily puzzles
 
-Feedback: Rate content or events using stars.
+Feedback: Rate content or events using stars
 
-Chatbot: Ask questions or get guidance.
+Chatbot: Ask questions or get guidance
 
-FAQs: Browse commonly asked questions.
+FAQs: Browse commonly asked questions
 
-Leaderboard/Gamification: Participate in quizzes, challenges, and gamified week events to earn points and rank up.
+Leaderboard/Gamification: Participate in quizzes, challenges, and gamified week events to earn points and rank up
