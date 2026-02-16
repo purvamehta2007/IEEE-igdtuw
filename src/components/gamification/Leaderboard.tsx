@@ -1,93 +1,99 @@
-import { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, TrendingUp } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { Trophy, Medal, Award, TrendingUp, Star } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GradientText } from '../ui/GradientText';
 
+const DUMMY_LEADERBOARD = [
+  { id: '1', full_name: 'Ananya Sharma', total_points: 2450, level: 25 },
+  { id: '2', full_name: 'Priya Singh', total_points: 2100, level: 21 },
+  { id: '3', full_name: 'Riya Kapoor', total_points: 1950, level: 19 },
+  { id: '4', full_name: 'Isha Verma', total_points: 1800, level: 18 },
+  { id: '5', full_name: 'Sneha Reddy', total_points: 1650, level: 16 },
+];
+
 export function Leaderboard() {
-  const [topUsers, setTopUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const topThree = [DUMMY_LEADERBOARD[1], DUMMY_LEADERBOARD[0], DUMMY_LEADERBOARD[2]];
 
-  useEffect(() => {
-    loadLeaderboard();
-  }, []);
-
-  const loadLeaderboard = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, total_points, level')
-      .order('total_points', { ascending: false })
-      .limit(50);
-
-    if (!error && data) {
-      setTopUsers(data);
-    }
-    setLoading(false);
+  const getRankStyles = (index: number) => {
+    // index 0 = Rank 2, index 1 = Rank 1, index 2 = Rank 3 (due to podium layout)
+    if (index === 1) return { 
+      icon: Trophy, 
+      color: 'text-yellow-400', 
+      border: 'border-yellow-500/50',
+      bg: 'bg-yellow-500/10',
+      height: 'h-[420px]',
+      label: 'Champion'
+    };
+    if (index === 0) return { 
+      icon: Medal, 
+      color: 'text-slate-300', 
+      border: 'border-slate-400/30',
+      bg: 'bg-slate-400/5',
+      height: 'h-[350px]',
+      label: 'Runner Up'
+    };
+    return { 
+      icon: Medal, 
+      color: 'text-orange-500', 
+      border: 'border-orange-600/30',
+      bg: 'bg-orange-600/5',
+      height: 'h-[320px]',
+      label: 'Finalist'
+    };
   };
-
-  const getRankIcon = (index: number) => {
-    if (index === 0) return { icon: Trophy, color: 'text-yellow-400', glow: 'shadow-[0_0_20px_rgba(250,204,21,0.6)]' };
-    if (index === 1) return { icon: Medal, color: 'text-gray-300', glow: 'shadow-[0_0_20px_rgba(209,213,219,0.6)]' };
-    if (index === 2) return { icon: Medal, color: 'text-orange-400', glow: 'shadow-[0_0_20px_rgba(251,146,60,0.6)]' };
-    return { icon: Award, color: 'text-[#00D9FF]', glow: 'shadow-[0_0_15px_rgba(0,217,255,0.4)]' };
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-[#00D9FF] text-xl">Loading leaderboard...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <GradientText className="text-5xl mb-4">Leaderboard</GradientText>
-        <p className="text-gray-400 text-lg">Top contributors and achievers</p>
+    <div className="container mx-auto px-4 py-12 bg-transparent">
+      <div className="text-center mb-16">
+        <div className="inline-block px-4 py-1.5 mb-4 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">
+          Current Season: Genesis
+        </div>
+        <h1 className="text-6xl font-black italic uppercase tracking-tighter text-white">
+          The <GradientText>Elite</GradientText>
+        </h1>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {topUsers.slice(0, 3).map((user, index) => {
-            const { icon: Icon, color, glow } = getRankIcon(index);
-            const heights = ['md:h-80', 'md:h-64', 'md:h-72'];
+      <div className="max-w-6xl mx-auto">
+        {/* --- DYNAMIC PODIUM --- */}
+        <div className="flex flex-col md:flex-row items-end justify-center gap-4 mb-16">
+          {topThree.map((user, index) => {
+            const styles = getRankStyles(index);
+            const Icon = styles.icon;
+            const isFirst = index === 1;
 
             return (
-              <div
-                key={user.id}
-                className={`
-                  ${index === 1 ? 'order-first md:order-none' : ''}
-                  ${index === 0 ? 'md:col-start-2' : ''}
-                `}
-              >
+              <div key={user.id} className={`w-full md:w-1/3 transition-all duration-500 hover:z-20`}>
                 <GlassCard
-                  className={`
-                    p-6 text-center
-                    ${heights[index]}
-                    flex flex-col justify-center
-                    ${glow}
-                  `}
-                  neonColor={index === 0 ? 'blue' : index === 1 ? 'purple' : 'violet'}
+                  className={`relative flex flex-col items-center justify-center p-8 overflow-hidden border-2 ${styles.border} ${styles.bg} ${styles.height}`}
+                  neonColor={isFirst ? 'blue' : 'purple'}
                   hover3d
                 >
-                  <div className="mb-4">
-                    <Icon size={48} className={`mx-auto ${color}`} />
+                  {/* Visual Flourish for #1 */}
+                  {isFirst && (
+                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent shadow-[0_0_20px_rgba(234,179,8,0.8)]" />
+                  )}
+
+                  <div className={`mb-6 p-4 rounded-full bg-black/40 border border-white/10 shadow-2xl`}>
+                    <Icon size={isFirst ? 64 : 48} className={styles.color} />
                   </div>
-                  <div className={`
-                    text-6xl font-bold mb-3
-                    ${index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : 'text-orange-400'}
-                  `}>
-                    #{index + 1}
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {user.full_name || 'Anonymous'}
+
+                  <span className={`font-mono text-[10px] uppercase tracking-[0.4em] mb-2 ${styles.color}`}>
+                    {styles.label}
+                  </span>
+                  
+                  <h3 className={`font-black uppercase italic tracking-tighter mb-1 transition-all ${isFirst ? 'text-3xl' : 'text-xl'} text-white`}>
+                    {user.full_name}
                   </h3>
-                  <div className="text-[#00D9FF] text-2xl font-bold mb-1">
-                    {user.total_points} pts
+                  
+                  <div className="flex items-center gap-2 mb-6">
+                    <Star size={14} className="text-cyan-400 fill-cyan-400" />
+                    <span className="text-cyan-400 font-mono text-sm tracking-widest font-bold">
+                      {user.total_points.toLocaleString()} XP
+                    </span>
                   </div>
-                  <div className="text-gray-400 text-sm">
-                    Level {user.level}
+
+                  <div className="mt-auto w-full py-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Neural Level</span>
+                    <p className="text-white font-black text-xl">{user.level}</p>
                   </div>
                 </GlassCard>
               </div>
@@ -95,79 +101,39 @@ export function Leaderboard() {
           })}
         </div>
 
-        <GlassCard className="p-6" neonColor="blue">
-          <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-            <TrendingUp className="text-[#00D9FF]" />
-            Full Rankings
+        {/* --- FULL RANKINGS --- */}
+        <div className="grid grid-cols-1 gap-4">
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-[0.5em] mb-2 ml-4 flex items-center gap-2">
+            <TrendingUp size={14} /> Pipeline Rankings
           </h3>
-
-          <div className="space-y-3">
-            {topUsers.slice(3).map((user, index) => (
-              <div
-                key={user.id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-black/30 border border-[#00D9FF]/20 hover:border-[#00D9FF]/40 transition-all"
-              >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00D9FF] to-purple-500 flex items-center justify-center font-bold text-white">
-                  #{index + 4}
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-white font-semibold">
-                    {user.full_name || 'Anonymous'}
-                  </h4>
-                  <p className="text-gray-400 text-sm">Level {user.level}</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-[#00D9FF] font-bold text-lg">
-                    {user.total_points}
+          {DUMMY_LEADERBOARD.slice(3).map((user, index) => (
+            <div
+              key={user.id}
+              className="group flex items-center gap-6 p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-all"
+            >
+              <div className="font-mono text-2xl font-black italic text-gray-700 group-hover:text-cyan-500 transition-colors">
+                {String(index + 4).padStart(2, '0')}
+              </div>
+              
+              <div className="flex-1">
+                <h4 className="text-lg font-bold text-white uppercase italic tracking-tight group-hover:translate-x-1 transition-transform">
+                  {user.full_name}
+                </h4>
+                <div className="flex items-center gap-3 mt-1">
+                  <div className="h-1 w-24 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-cyan-500" style={{ width: `${(user.total_points/2500)*100}%` }} />
                   </div>
-                  <div className="text-gray-400 text-sm">points</div>
+                  <span className="text-[10px] text-gray-500 font-mono uppercase">Lvl {user.level}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </GlassCard>
 
-        <GlassCard className="p-6 mt-6" neonColor="purple">
-          <h3 className="text-xl font-bold text-white mb-4">How to Earn Points</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#00D9FF]/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-[#00D9FF] font-bold">+10</span>
-              </div>
-              <div>
-                <h4 className="text-white font-semibold">Event Participation</h4>
-                <p className="text-gray-400 text-sm">Attend events and workshops</p>
+              <div className="text-right">
+                <div className="text-xl font-black text-white italic">{user.total_points}</div>
+                <div className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">XP_CREDITS</div>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-purple-400 font-bold">+5</span>
-              </div>
-              <div>
-                <h4 className="text-white font-semibold">Feedback Submission</h4>
-                <p className="text-gray-400 text-sm">Share your event feedback</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-violet-400 font-bold">+20</span>
-              </div>
-              <div>
-                <h4 className="text-white font-semibold">Recruitment Success</h4>
-                <p className="text-gray-400 text-sm">Join the team</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-pink-400 font-bold">+15</span>
-              </div>
-              <div>
-                <h4 className="text-white font-semibold">Content Contribution</h4>
-                <p className="text-gray-400 text-sm">Share knowledge and help others</p>
-              </div>
-            </div>
-          </div>
-        </GlassCard>
+          ))}
+        </div>
       </div>
     </div>
   );
